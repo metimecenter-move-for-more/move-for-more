@@ -43,6 +43,7 @@ h1 {
   font-family: 'Bodoni Moda', Georgia, serif;
   font-size: 34px;
   letter-spacing: 1px;
+  line-height: 1.2;
 }
 
 .intro {
@@ -165,7 +166,7 @@ canvas {
       <input
         id="photo"
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/*"
+        accept="image/*"
         required
       >
 
@@ -252,7 +253,7 @@ function fitText(text, maxWidth, initialSize, family, weight = "700") {
   ctx.font = `${weight} ${size}px "${family}"`;
 
   while (ctx.measureText(text).width > maxWidth && size > 14) {
-    size -= 1;
+    size--;
     ctx.font = `${weight} ${size}px "${family}"`;
   }
 
@@ -273,6 +274,7 @@ function drawPoster() {
   const H = canvas.height;
 
   ctx.clearRect(0, 0, W, H);
+
   ctx.fillStyle = WHITE;
   ctx.fillRect(0, 0, W, H);
 
@@ -286,7 +288,7 @@ function drawPoster() {
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
 
-  // Brand
+  // Metime branding
   ctx.fillStyle = GOLD;
   ctx.font = '700 30px "Poppins", Arial, sans-serif';
   ctx.fillText("METIME FITNESS CENTRE KADUNA", 540, 53);
@@ -295,7 +297,7 @@ function drawPoster() {
   ctx.font = '500 19px "Poppins", Arial, sans-serif';
   ctx.fillText("FITNESS  •  WELLNESS  •  SISTERHOOD", 540, 91);
 
-  // Elegant attendance statement
+  // Attendance statement
   ctx.fillStyle = WHITE;
   ctx.font = '500 70px "Bodoni Moda", Georgia, serif';
   ctx.fillText("I will be", 540, 174);
@@ -306,7 +308,7 @@ function drawPoster() {
   ctx.font = '800 59px "Poppins", Arial, sans-serif';
   ctx.fillText("ATTENDING", 540, 265);
 
-  // Main event title
+  // Event title
   ctx.fillStyle = DARK_GOLD;
   ctx.font = fitText(
     "METIME ANNUAL FITNESS WALK",
@@ -330,7 +332,12 @@ function drawPoster() {
   roundedRect(80, 470, 390, 440, 14, PALE_GOLD);
 
   if (portrait) {
-    const box = { x: 90, y: 480, w: 370, h: 420 };
+    const box = {
+      x: 90,
+      y: 480,
+      w: 370,
+      h: 420
+    };
 
     const scale = Math.max(
       box.w / portrait.width,
@@ -341,6 +348,7 @@ function drawPoster() {
     const sh = portrait.height * scale;
 
     ctx.save();
+
     ctx.beginPath();
     ctx.roundRect(box.x, box.y, box.w, box.h, 10);
     ctx.clip();
@@ -354,6 +362,7 @@ function drawPoster() {
     );
 
     ctx.restore();
+
   } else {
     ctx.fillStyle = DARK_GOLD;
     ctx.font = '700 27px "Poppins", Arial, sans-serif';
@@ -379,7 +388,7 @@ function drawPoster() {
 
   ctx.fillText(participantName, 275, 972);
 
-  // Event information
+  // Event details
   ctx.textAlign = "left";
 
   ctx.fillStyle = DARK_GOLD;
@@ -401,7 +410,7 @@ function drawPoster() {
   ctx.font = '700 35px "Bodoni Moda", Georgia, serif';
   ctx.fillText("2026", 540, 697);
 
-  // Walk details
+  // Walk information
   ctx.fillStyle = BLACK;
   ctx.font = '700 23px "Poppins", Arial, sans-serif';
   ctx.fillText("ARRIVAL: 7:00 AM", 530, 760);
@@ -434,6 +443,7 @@ function drawPoster() {
   ctx.font = '700 21px "Poppins", Arial, sans-serif';
   ctx.fillText("WALK WITH US. MOVE FOR MORE.", 540, 1185);
 
+  // Contact information
   ctx.fillStyle = BLACK;
   ctx.font = '700 21px "Poppins", Arial, sans-serif';
   ctx.fillText("CONTACT: 09036556838", 540, 1270);
@@ -441,8 +451,51 @@ function drawPoster() {
   ctx.font = '500 19px "Poppins", Arial, sans-serif';
   ctx.fillText("metimecenter@gmail.com", 540, 1305);
 
+  // Bottom gold border
   ctx.fillStyle = GOLD;
   ctx.fillRect(0, 1335, W, 15);
+}
+
+// IndexedDB storage helpers
+function openPosterDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("MetimePosterDB", 1);
+
+    request.onupgradeneeded = function() {
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains("posters")) {
+        db.createObjectStore("posters");
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function savePosterToDatabase(blob, name) {
+  const db = await openPosterDatabase();
+
+  try {
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction("posters", "readwrite");
+      const store = transaction.objectStore("posters");
+
+      store.put({
+        image: blob,
+        name: name
+      }, "currentPoster");
+
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(
+        transaction.error || new Error("Saving was cancelled.")
+      );
+    });
+  } finally {
+    db.close();
+  }
 }
 
 function invalidatePoster() {
@@ -488,7 +541,9 @@ photoInput.addEventListener("change", function(event) {
 
       portrait = image;
       drawPoster();
-      status.textContent = "Photograph loaded. Create your poster.";
+
+      status.textContent =
+        "Photograph loaded. Tap Create My Poster.";
     };
 
     image.onerror = function() {
@@ -542,11 +597,15 @@ document.getElementById("posterForm").addEventListener(
         behavior: "smooth",
         block: "center"
       });
+
     } catch (error) {
-      console.error(error);
-      status.textContent = "Your poster is ready to preview.";
+      console.error("Poster preview error:", error);
+
       posterReady = true;
       proceed.hidden = false;
+
+      status.textContent =
+        "Your poster preview is ready. You can continue to download.";
     } finally {
       createButton.disabled = false;
       createButton.textContent = "CREATE MY POSTER";
@@ -562,28 +621,46 @@ proceed.addEventListener("click", async function() {
 
   proceed.disabled = true;
   proceed.textContent = "PREPARING POSTER...";
+  status.textContent = "Saving your poster...";
 
   try {
     await loadFonts();
     drawPoster();
 
-    // JPEG is considerably smaller than PNG.
-    const imageData = canvas.toDataURL("image/jpeg", 0.88);
+    // Convert the poster to a compressed JPEG Blob.
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        function(result) {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(new Error("The browser could not create the image."));
+          }
+        },
+        "image/jpeg",
+        0.85
+      );
+    });
 
-    // Store the compressed image instead of a large PNG.
-    sessionStorage.setItem("metimePosterData", imageData);
-    sessionStorage.setItem(
-      "metimePosterName",
+    // Save the poster in IndexedDB, avoiding sessionStorage limits.
+    await savePosterToDatabase(
+      blob,
       nameInput.value.trim()
     );
 
+    // Open the download page only after saving succeeds.
     window.location.href = "download.html";
+
   } catch (error) {
     console.error("Poster preparation failed:", error);
 
+    status.textContent =
+      "Could not save the poster. " +
+      (error.message || "Please try again.");
+
     alert(
-      "The poster could not be prepared. Please refresh the page " +
-      "and try again."
+      "The poster could not be saved. Please try again. " +
+      "If the problem continues, send a screenshot of the error."
     );
 
     proceed.disabled = false;
@@ -591,10 +668,12 @@ proceed.addEventListener("click", async function() {
   }
 });
 
+// Draw the initial preview.
 loadFonts()
-  .catch(() => {})
+  .catch(error => console.warn("Fonts could not load:", error))
   .finally(drawPoster);
 </script>
 
 </body>
 </html>
+    
