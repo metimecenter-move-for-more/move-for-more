@@ -19,7 +19,6 @@
   --white: #FFFFFF;
 }
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
   padding: 14px;
@@ -28,7 +27,6 @@ body {
   font-family: 'Poppins', Arial, sans-serif;
 }
 main { max-width: 760px; margin: auto; }
-
 h1 {
   margin: 14px 0;
   text-align: center;
@@ -37,11 +35,7 @@ h1 {
   font-size: clamp(27px, 6vw, 38px);
   line-height: 1.2;
 }
-.intro {
-  text-align: center;
-  line-height: 1.8;
-  font-size: 14px;
-}
+.intro { text-align: center; line-height: 1.8; font-size: 14px; }
 .card {
   background: white;
   border: 1px solid var(--gold);
@@ -50,11 +44,7 @@ h1 {
   margin: 20px 0;
   box-shadow: 0 6px 20px rgba(0,0,0,.04);
 }
-label {
-  display: block;
-  margin: 18px 0 8px;
-  font-weight: 700;
-}
+label { display: block; margin: 18px 0 8px; font-weight: 700; }
 input {
   width: 100%;
   padding: 13px;
@@ -75,14 +65,10 @@ button {
   letter-spacing: .6px;
   cursor: pointer;
 }
-button.secondary {
-  background: var(--black);
-  color: var(--gold);
-  border-color: var(--black);
-}
+button.secondary { background: var(--black); color: var(--gold); border-color: var(--black); }
 button:disabled { opacity: .6; }
 .note { font-size: 13px; line-height: 1.8; }
-canvas {
+canvas, #preview {
   display: block;
   width: 100%;
   height: auto;
@@ -90,7 +76,6 @@ canvas {
   border: 1px solid #E5D8AC;
 }
 [hidden] { display: none !important; }
-
 @media (max-width: 600px) {
   body { padding: 9px; }
   .card { padding: 14px; }
@@ -111,8 +96,7 @@ canvas {
   <section class="card">
     <form id="posterForm">
       <label for="name">Your name</label>
-      <input id="name" type="text" maxlength="48"
-             placeholder="Enter your name" required>
+      <input id="name" type="text" maxlength="48" placeholder="Enter your name" required>
 
       <label for="photo">Upload your photograph</label>
       <input id="photo" type="file" accept="image/*" required>
@@ -123,10 +107,7 @@ canvas {
       </p>
 
       <button id="createButton" type="submit">CREATE MY POSTER</button>
-
-      <button id="saveButton" type="button" class="secondary" hidden>
-        OPEN POSTER TO SAVE
-      </button>
+      <button id="saveButton" type="button" class="secondary" hidden>SAVE POSTER</button>
     </form>
 
     <p id="status" class="note" aria-live="polite">
@@ -135,6 +116,7 @@ canvas {
 
     <canvas id="canvas" width="1080" height="1350"
             aria-label="Metime Annual Fitness Walk poster"></canvas>
+    <img id="preview" alt="Your Metime poster" hidden>
   </section>
 
   <section class="card">
@@ -162,6 +144,7 @@ const photoInput = document.getElementById("photo");
 const createButton = document.getElementById("createButton");
 const saveButton = document.getElementById("saveButton");
 const statusText = document.getElementById("status");
+const preview = document.getElementById("preview");
 
 const GOLD = "#D4AF37";
 const DARK_GOLD = "#A88620";
@@ -175,6 +158,18 @@ let imageVersion = 0;
 let posterBlob = null;
 let posterObjectURL = null;
 
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    r = Math.min(r || 0, w / 2, h / 2);
+    this.moveTo(x + r, y);
+    this.arcTo(x + w, y, x + w, y + h, r);
+    this.arcTo(x + w, y + h, x, y + h, r);
+    this.arcTo(x, y + h, x, y, r);
+    this.arcTo(x, y, x + w, y, r);
+    this.closePath();
+  };
+}
+
 function roundedRect(x, y, w, h, r, color) {
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, r);
@@ -184,21 +179,28 @@ function roundedRect(x, y, w, h, r, color) {
 
 function fitText(text, maxWidth, initialSize, family, weight = 700) {
   let size = initialSize;
-  ctx.font = `${weight} ${size}px "${family}"`;
-
+  ctx.font = ${weight} ${size}px "${family}";
   while (ctx.measureText(text).width > maxWidth && size > 14) {
     size--;
-    ctx.font = `${weight} ${size}px "${family}"`;
+    ctx.font = ${weight} ${size}px "${family}";
   }
   return ctx.font;
 }
 
 async function loadFonts() {
   if (!document.fonts) return;
-  await Promise.all([
-    document.fonts.load('700 60px "Bodoni Moda"'),
-    document.fonts.load('700 30px "Poppins"')
-  ]);
+  try {
+    await Promise.race([
+      Promise.all([
+        document.fonts.load('700 60px "Bodoni Moda"'),
+        document.fonts.load('500 60px "Bodoni Moda"'),
+        document.fonts.load('700 30px "Poppins"'),
+        document.fonts.load('800 30px "Poppins"'),
+        document.fonts.load('500 20px "Poppins"')
+      ]),
+      new Promise(r => setTimeout(r, 3000))
+    ]);
+  } catch (e) {}
 }
 
 function drawPoster() {
@@ -206,7 +208,6 @@ function drawPoster() {
   ctx.fillStyle = WHITE;
   ctx.fillRect(0, 0, 1080, 1350);
 
-  // Header
   ctx.fillStyle = BLACK;
   ctx.fillRect(0, 0, 1080, 250);
   ctx.fillStyle = GOLD;
@@ -231,7 +232,6 @@ function drawPoster() {
   ctx.font = '800 59px "Poppins", Arial, sans-serif';
   ctx.fillText("ATTENDING", 540, 265);
 
-  // Event title
   ctx.fillStyle = DARK_GOLD;
   ctx.font = fitText("METIME ANNUAL FITNESS WALK", 1000, 46, "Bodoni Moda");
   ctx.fillText("METIME ANNUAL FITNESS WALK", 540, 340);
@@ -244,7 +244,6 @@ function drawPoster() {
   ctx.font = '600 18px "Poppins", Arial, sans-serif';
   ctx.fillText("A WOMEN-AND-GIRLS-ONLY EVENT", 540, 425);
 
-  // Photo frame
   roundedRect(65, 455, 420, 470, 22, GOLD);
   roundedRect(80, 470, 390, 440, 14, PALE_GOLD);
 
@@ -258,13 +257,7 @@ function drawPoster() {
     ctx.beginPath();
     ctx.roundRect(box.x, box.y, box.w, box.h, 10);
     ctx.clip();
-    ctx.drawImage(
-      portrait,
-      box.x + (box.w - sw) / 2,
-      box.y + (box.h - sh) / 2,
-      sw,
-      sh
-    );
+    ctx.drawImage(portrait, box.x + (box.w - sw) / 2, box.y + (box.h - sh) / 2, sw, sh);
     ctx.restore();
   } else {
     ctx.fillStyle = DARK_GOLD;
@@ -272,14 +265,12 @@ function drawPoster() {
     ctx.fillText("YOUR PHOTO", 275, 675);
   }
 
-  // Participant name
   const participantName = (nameInput.value.trim() || "YOUR NAME").toUpperCase();
   roundedRect(65, 930, 420, 65, 10, BLACK);
   ctx.fillStyle = GOLD;
   ctx.font = fitText(participantName, 390, 34, "Bodoni Moda");
   ctx.fillText(participantName, 275, 972);
 
-  // Event details
   ctx.textAlign = "left";
   ctx.fillStyle = DARK_GOLD;
   ctx.font = '700 31px "Bodoni Moda", Georgia, serif';
@@ -312,7 +303,6 @@ function drawPoster() {
   ctx.fillText("No. 1B Toro Close, off Sultan Road,", 530, 912);
   ctx.fillText("near Garkuwa Hospital, Kaduna North.", 530, 941);
 
-  // Footer
   roundedRect(55, 1030, 970, 200, 16, BLACK);
   ctx.textAlign = "center";
 
@@ -344,7 +334,8 @@ function resetPosterExport() {
   posterBlob = null;
   saveButton.hidden = true;
   statusText.textContent = "";
-
+  preview.hidden = true;
+  canvas.hidden = false;
   if (posterObjectURL) {
     URL.revokeObjectURL(posterObjectURL);
     posterObjectURL = null;
@@ -362,10 +353,7 @@ photoInput.addEventListener("change", event => {
   portrait = null;
 
   const file = event.target.files[0];
-  if (!file) {
-    drawPoster();
-    return;
-  }
+  if (!file) { drawPoster(); return; }
 
   if (!file.type.startsWith("image/")) {
     alert("Please select a valid image.");
@@ -377,167 +365,87 @@ photoInput.addEventListener("change", event => {
   statusText.textContent = "Loading your photograph...";
 
   const reader = new FileReader();
-
   reader.onload = e => {
     const image = new Image();
-
     image.onload = () => {
       if (version !== imageVersion) return;
       portrait = image;
       drawPoster();
       statusText.textContent = "Photograph loaded. Tap Create My Poster.";
     };
-
     image.onerror = () => {
       if (version !== imageVersion) return;
       statusText.textContent = "Unable to read the photograph. Please choose another.";
     };
-
     image.src = e.target.result;
   };
-
-  reader.onerror = () => {
-    statusText.textContent = "Unable to read the selected file.";
-  };
-
+  reader.onerror = () => { statusText.textContent = "Unable to read the selected file."; };
   reader.readAsDataURL(file);
-});
-
-document.getElementById("posterForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  if (!nameInput.value.trim()) {
-    alert("Please enter your name.");
-    return;
-  }
-
-  if (!portrait) {
-    alert("Please upload your photograph and wait for it to load.");
-    return;
-  }
-
-  createButton.disabled = true;
-  createButton.textContent = "CREATING POSTER...";
-  statusText.textContent = "Preparing your poster...";
-
-  try {
-    await loadFonts();
-  } catch (error) {
-    console.warn("Using available fonts.", error);
-  }
-
-  drawPoster();
-  posterReady = true;
-  saveButton.hidden = false;
-  statusText.textContent = "Your poster is ready. Tap OPEN POSTER TO SAVE.";
-
-  createButton.disabled = false;
-  createButton.textContent = "CREATE MY POSTER";
-
-  saveButton.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
 function makeFileName() {
   const cleanName = nameInput.value.trim()
     .replace(/[^a-z0-9]+/gi, "-")
     .replace(/^-|-$/g, "") || "Participant";
-
   return "Metime-Move-for-More-" + cleanName + ".jpg";
 }
 
+document.getElementById("posterForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!nameInput.value.trim()) { alert("Please enter your name."); return; }
+  if (!portrait) { alert("Please upload your photograph and wait for it to load."); return; }
+
+  createButton.disabled = true;
+  createButton.textContent = "CREATING POSTER...";
+  statusText.textContent = "Preparing your poster...";
+
+  await loadFonts();
+  drawPoster();
+
+  posterBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.92));
+
+  createButton.disabled = false;
+  createButton.textContent = "CREATE MY POSTER";
+
+  if (!posterBlob) {
+    statusText.textContent = "Could not create the image. Please try again.";
+    return;
+  }
+
+  posterReady = true;
+  saveButton.hidden = false;
+  statusText.textContent = "Your poster is ready. Tap SAVE POSTER.";
+  saveButton.scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
 saveButton.addEventListener("click", async () => {
-  if (!posterReady || !portrait) {
+  if (!posterReady || !posterBlob) {
     alert("Please create your poster first.");
     return;
   }
 
-  saveButton.disabled = true;
-  saveButton.textContent = "PREPARING IMAGE...";
-
-  // Open a blank tab immediately from the user's tap.
-  // This avoids mobile popup blockers after asynchronous work.
-  const imageTab = window.open("about:blank", "_blank");
+  const file = new File([posterBlob], makeFileName(), { type: "image/jpeg" });
 
   try {
-    await loadFonts();
-    drawPoster();
-
-    const blob = await new Promise((resolve, reject) => {
-      canvas.toBlob(result => {
-        if (result) resolve(result);
-        else reject(new Error("The browser could not export the poster."));
-      }, "image/jpeg", 0.9);
-    });
-
-    if (!imageTab) {
-      // If pop-ups are blocked, offer the iPhone share sheet.
-      const file = new File([blob], makeFileName(), { type: "image/jpeg" });
-
-      if (navigator.share && navigator.canShare &&
-          navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: "Metime Annual Fitness Walk — Move for More"
-        });
-        statusText.textContent = "Choose Save Image or Save to Photos in the sharing menu.";
-        return;
-      }
-
-      throw new Error("Your browser blocked the image tab. Allow pop-ups and try again.");
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file] });
+      statusText.textContent = "Choose Save Image in the share menu if you haven't already.";
+      return;
     }
-
-    // Display a standalone image, without a download page.
-    posterObjectURL = URL.createObjectURL(blob);
-
-    imageTab.document.open();
-    imageTab.document.write(`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${makeFileName()}</title>
-<style>
-html,body{margin:0;min-height:100%;background:#171717}
-body{display:flex;align-items:center;justify-content:center}
-img{display:block;width:100%;height:auto;max-width:1080px}
-p{position:fixed;bottom:0;left:0;right:0;margin:0;padding:12px;
-background:#171717;color:#D4AF37;text-align:center;
-font:14px Arial,sans-serif}
-</style>
-</head>
-<body>
-<img id="posterImage" alt="Your Metime Move for More poster">
-<p>Press and hold the poster, then choose Save to Photos.</p>
-</body>
-</html>`);
-    imageTab.document.close();
-
-    imageTab.document.getElementById("posterImage").src = posterObjectURL;
-
-    statusText.textContent =
-      "Your poster opened in a new tab. Press and hold the image, then choose Save to Photos.";
-
-  } catch (error) {
-    console.error("Poster export failed:", error);
-
-    if (imageTab && !imageTab.closed) {
-      imageTab.close();
-    }
-
-    statusText.textContent =
-      "Could not open the poster: " + (error.message || "Unknown error");
-
-    alert("Could not open the poster image. " +
-      (error.message || "Please try again."));
-  } finally {
-    saveButton.disabled = false;
-    saveButton.textContent = "OPEN POSTER TO SAVE";
+  } catch (e) {
+    if (e.name === "AbortError") return;
   }
+
+  posterObjectURL = URL.createObjectURL(posterBlob);
+  preview.src = posterObjectURL;
+  preview.hidden = false;
+  canvas.hidden = true;
+  statusText.textContent = "Press and hold the poster, then choose Save to Photos.";
+  preview.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
-loadFonts()
-  .catch(() => {})
-  .finally(drawPoster);
+loadFonts().finally(drawPoster);
 </script>
 </body>
 </html>
