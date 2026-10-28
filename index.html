@@ -1,15 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#171717">
-
-<title>Metime Annual Fitness Walk | Move for More</title>
+<title>Metime Annual Fitness Walk — Move for More</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -19,127 +19,94 @@
   --black: #171717;
   --white: #FFFFFF;
 }
-
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  padding: 16px;
+  padding: 14px;
   background: #F8F6EF;
   color: var(--black);
   font-family: 'Poppins', Arial, sans-serif;
 }
-
-main {
-  max-width: 760px;
-  margin: auto;
-}
+main { max-width: 760px; margin: auto; }
 
 h1 {
+  margin: 14px 0;
   text-align: center;
   color: var(--dark-gold);
   font-family: 'Bodoni Moda', Georgia, serif;
-  font-size: 34px;
-  letter-spacing: 1px;
-  line-height: 1.3;
+  font-size: clamp(27px, 6vw, 38px);
+  line-height: 1.2;
 }
-
 .intro {
   text-align: center;
   line-height: 1.8;
   font-size: 14px;
 }
-
 .card {
-  background: var(--white);
+  background: white;
   border: 1px solid var(--gold);
   border-radius: 16px;
   padding: 20px;
   margin: 20px 0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+  box-shadow: 0 6px 20px rgba(0,0,0,.04);
 }
-
 label {
   display: block;
-  font-weight: 600;
   margin: 18px 0 8px;
+  font-weight: 700;
 }
-
 input {
   width: 100%;
   padding: 13px;
-  font-size: 16px;
+  font: 16px 'Poppins', Arial, sans-serif;
   border: 1px solid #C9B66B;
   border-radius: 8px;
-  font-family: 'Poppins', Arial, sans-serif;
 }
-
 button {
-  display: block;
   width: 100%;
-  padding: 15px;
-  margin-top: 15px;
+  min-height: 50px;
+  padding: 14px;
+  margin-top: 14px;
   border: 1px solid var(--gold);
   border-radius: 8px;
   background: var(--gold);
   color: var(--black);
-  font-family: 'Poppins', Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font: 700 14px 'Poppins', Arial, sans-serif;
+  letter-spacing: .6px;
   cursor: pointer;
 }
-
-button:disabled {
-  opacity: 0.65;
-  cursor: wait;
-}
-
-.secondary {
+button.secondary {
   background: var(--black);
   color: var(--gold);
   border-color: var(--black);
 }
-
-.note {
-  font-size: 13px;
-  line-height: 1.8;
-}
-
+button:disabled { opacity: .6; }
+.note { font-size: 13px; line-height: 1.8; }
 canvas {
   display: block;
   width: 100%;
   height: auto;
   margin-top: 20px;
   border: 1px solid #E5D8AC;
-  border-radius: 5px;
 }
+[hidden] { display: none !important; }
 
-[hidden] {
-  display: none !important;
+#saveInstructions {
+  padding: 12px;
+  background: var(--pale-gold);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
 }
-
 @media (max-width: 600px) {
-  body {
-    padding: 10px;
-  }
-
-  .card {
-    padding: 14px;
-  }
-
-  h1 {
-    font-size: 29px;
-  }
+  body { padding: 9px; }
+  .card { padding: 14px; }
 }
 </style>
 </head>
 
 <body>
 <main>
-
   <h1>METIME · MOVE FOR MORE</h1>
 
   <p class="intro">
@@ -149,61 +116,46 @@ canvas {
   </p>
 
   <section class="card">
-
     <form id="posterForm">
-
       <label for="name">Your name</label>
-      <input
-        id="name"
-        type="text"
-        maxlength="48"
-        placeholder="Enter your name"
-        autocomplete="name"
-        required
-      >
+      <input id="name" type="text" maxlength="48"
+             placeholder="Enter your name" required>
 
       <label for="photo">Upload your photograph</label>
-      <input
-        id="photo"
-        type="file"
-        accept="image/*"
-        required
-      >
+      <input id="photo" type="file" accept="image/*" required>
 
       <p class="note">
-        Choose a clear photograph. Your photo is processed in your
-        browser and is not uploaded to this website.
+        Your photograph is processed in your browser and is not
+        uploaded to this website.
       </p>
 
-      <button id="createButton" type="submit">
-        CREATE MY POSTER
+      <button id="createButton" type="submit">CREATE MY POSTER</button>
+      <button id="downloadButton" type="button" class="secondary" hidden>
+        SAVE / DOWNLOAD MY POSTER
       </button>
-
-      <button
-        type="button"
-        id="downloadButton"
-        class="secondary"
-        hidden
-      >
-        DOWNLOAD MY POSTER
-      </button>
-
     </form>
 
-    <p id="status" class="note" aria-live="polite"></p>
+    <p id="status" class="note" aria-live="polite">
+      Enter your name and upload a photograph to begin.
+    </p>
 
-    <canvas
-      id="canvas"
-      width="1080"
-      height="1350"
-      aria-label="Personalised Metime Annual Fitness Walk poster"
-    ></canvas>
+    <canvas id="canvas" width="1080" height="1350"
+            aria-label="Metime Annual Fitness Walk poster"></canvas>
 
+    <div id="saveInstructions" class="note" hidden>
+      <strong>Your poster is ready.</strong>
+      <p id="fallbackText">
+        If the sharing menu does not open, use the button below to open
+        the image, then press and hold the image to save it to Photos.
+      </p>
+      <button id="openImageButton" type="button" hidden>
+        OPEN POSTER IMAGE
+      </button>
+    </div>
   </section>
 
   <section class="card">
     <strong>EVENT DETAILS</strong>
-
     <p class="note">
       Event: Metime Annual Fitness Walk<br>
       Slogan: Move for More<br>
@@ -217,18 +169,18 @@ canvas {
       Email: metimecenter@gmail.com
     </p>
   </section>
-
 </main>
 
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-
 const nameInput = document.getElementById("name");
 const photoInput = document.getElementById("photo");
-const downloadButton = document.getElementById("downloadButton");
-const status = document.getElementById("status");
 const createButton = document.getElementById("createButton");
+const downloadButton = document.getElementById("downloadButton");
+const statusText = document.getElementById("status");
+const saveInstructions = document.getElementById("saveInstructions");
+const openImageButton = document.getElementById("openImageButton");
 
 const GOLD = "#D4AF37";
 const DARK_GOLD = "#A88620";
@@ -239,6 +191,7 @@ const WHITE = "#FFFFFF";
 let portrait = null;
 let posterReady = false;
 let imageVersion = 0;
+let currentImageURL = null;
 
 function roundedRect(x, y, w, h, r, color) {
   ctx.beginPath();
@@ -247,22 +200,19 @@ function roundedRect(x, y, w, h, r, color) {
   ctx.fill();
 }
 
-function fitText(text, maxWidth, initialSize, family, weight = "700") {
+function fitText(text, maxWidth, initialSize, family, weight = 700) {
   let size = initialSize;
-
   ctx.font = `${weight} ${size}px "${family}"`;
 
   while (ctx.measureText(text).width > maxWidth && size > 14) {
     size--;
     ctx.font = `${weight} ${size}px "${family}"`;
   }
-
   return ctx.font;
 }
 
 async function loadFonts() {
   if (!document.fonts) return;
-
   await Promise.all([
     document.fonts.load('700 60px "Bodoni Moda"'),
     document.fonts.load('700 30px "Poppins"')
@@ -270,25 +220,18 @@ async function loadFonts() {
 }
 
 function drawPoster() {
-  const W = canvas.width;
-  const H = canvas.height;
-
-  ctx.clearRect(0, 0, W, H);
-
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = WHITE;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Black header
+  // Header
   ctx.fillStyle = BLACK;
-  ctx.fillRect(0, 0, W, 250);
-
+  ctx.fillRect(0, 0, 1080, 250);
   ctx.fillStyle = GOLD;
-  ctx.fillRect(0, 245, W, 8);
+  ctx.fillRect(0, 245, 1080, 8);
 
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
-
-  // Metime branding
   ctx.fillStyle = GOLD;
   ctx.font = '700 30px "Poppins", Arial, sans-serif';
   ctx.fillText("METIME FITNESS CENTRE KADUNA", 540, 53);
@@ -297,29 +240,19 @@ function drawPoster() {
   ctx.font = '500 19px "Poppins", Arial, sans-serif';
   ctx.fillText("FITNESS  •  WELLNESS  •  SISTERHOOD", 540, 91);
 
-  // Attendance statement
-  ctx.fillStyle = WHITE;
   ctx.font = '500 70px "Bodoni Moda", Georgia, serif';
   ctx.fillText("I will be", 540, 174);
 
   roundedRect(280, 205, 520, 90, 10, GOLD);
-
   ctx.fillStyle = BLACK;
   ctx.font = '800 59px "Poppins", Arial, sans-serif';
   ctx.fillText("ATTENDING", 540, 265);
 
-  // Main event title
+  // Main event
   ctx.fillStyle = DARK_GOLD;
-  ctx.font = fitText(
-    "METIME ANNUAL FITNESS WALK",
-    1000,
-    46,
-    "Bodoni Moda"
-  );
-
+  ctx.font = fitText("METIME ANNUAL FITNESS WALK", 1000, 46, "Bodoni Moda");
   ctx.fillText("METIME ANNUAL FITNESS WALK", 540, 340);
 
-  // Slogan
   ctx.fillStyle = BLACK;
   ctx.font = '800 31px "Poppins", Arial, sans-serif';
   ctx.fillText("MOVE FOR MORE", 540, 390);
@@ -328,32 +261,20 @@ function drawPoster() {
   ctx.font = '600 18px "Poppins", Arial, sans-serif';
   ctx.fillText("A WOMEN-AND-GIRLS-ONLY EVENT", 540, 425);
 
-  // Photo frame
+  // Photograph frame
   roundedRect(65, 455, 420, 470, 22, GOLD);
   roundedRect(80, 470, 390, 440, 14, PALE_GOLD);
 
   if (portrait) {
-    const box = {
-      x: 90,
-      y: 480,
-      w: 370,
-      h: 420
-    };
-
-    const scale = Math.max(
-      box.w / portrait.width,
-      box.h / portrait.height
-    );
-
+    const box = { x: 90, y: 480, w: 370, h: 420 };
+    const scale = Math.max(box.w / portrait.width, box.h / portrait.height);
     const sw = portrait.width * scale;
     const sh = portrait.height * scale;
 
     ctx.save();
-
     ctx.beginPath();
     ctx.roundRect(box.x, box.y, box.w, box.h, 10);
     ctx.clip();
-
     ctx.drawImage(
       portrait,
       box.x + (box.w - sw) / 2,
@@ -361,37 +282,24 @@ function drawPoster() {
       sw,
       sh
     );
-
     ctx.restore();
-
   } else {
     ctx.fillStyle = DARK_GOLD;
     ctx.font = '700 27px "Poppins", Arial, sans-serif';
     ctx.fillText("YOUR PHOTO", 275, 675);
-
     ctx.font = '400 20px "Poppins", Arial, sans-serif';
     ctx.fillText("Upload your picture", 275, 715);
   }
 
   // Participant name
-  const participantName =
-    (nameInput.value.trim() || "YOUR NAME").toUpperCase();
-
+  const participantName = (nameInput.value.trim() || "YOUR NAME").toUpperCase();
   roundedRect(65, 930, 420, 65, 10, BLACK);
-
   ctx.fillStyle = GOLD;
-  ctx.font = fitText(
-    participantName,
-    390,
-    34,
-    "Bodoni Moda"
-  );
-
+  ctx.font = fitText(participantName, 390, 34, "Bodoni Moda");
   ctx.fillText(participantName, 275, 972);
 
-  // Event information
+  // Event details
   ctx.textAlign = "left";
-
   ctx.fillStyle = DARK_GOLD;
   ctx.font = '700 31px "Bodoni Moda", Georgia, serif';
   ctx.fillText("MOVE FOR MORE", 530, 500);
@@ -401,17 +309,13 @@ function drawPoster() {
   ctx.fillText("EMPOWERING WOMEN", 530, 545);
   ctx.fillText("THROUGH FITNESS", 530, 580);
 
-  // Date panel
   roundedRect(520, 615, 500, 100, 10, GOLD);
-
   ctx.fillStyle = BLACK;
   ctx.font = '700 22px "Poppins", Arial, sans-serif';
   ctx.fillText("SATURDAY, 14 NOVEMBER", 540, 655);
-
   ctx.font = '700 35px "Bodoni Moda", Georgia, serif';
   ctx.fillText("2026", 540, 697);
 
-  // Walk information
   ctx.fillStyle = BLACK;
   ctx.font = '700 23px "Poppins", Arial, sans-serif';
   ctx.fillText("ARRIVAL: 7:00 AM", 530, 760);
@@ -429,9 +333,7 @@ function drawPoster() {
 
   // Footer
   roundedRect(55, 1030, 970, 200, 16, BLACK);
-
   ctx.textAlign = "center";
-
   ctx.fillStyle = GOLD;
   ctx.font = '700 32px "Bodoni Moda", Georgia, serif';
   ctx.fillText("WALK  •  CONNECT  •  STAY FIT", 540, 1090);
@@ -444,147 +346,114 @@ function drawPoster() {
   ctx.font = '700 21px "Poppins", Arial, sans-serif';
   ctx.fillText("WALK WITH US. MOVE FOR MORE.", 540, 1185);
 
-  // Contact information
   ctx.fillStyle = BLACK;
   ctx.font = '700 21px "Poppins", Arial, sans-serif';
   ctx.fillText("CONTACT: 09036556838", 540, 1270);
-
   ctx.font = '500 19px "Poppins", Arial, sans-serif';
   ctx.fillText("metimecenter@gmail.com", 540, 1305);
 
-  // Gold bottom border
   ctx.fillStyle = GOLD;
-  ctx.fillRect(0, 1335, W, 15);
+  ctx.fillRect(0, 1335, 1080, 15);
+}
+
+function clearOldImageURL() {
+  if (currentImageURL) {
+    URL.revokeObjectURL(currentImageURL);
+    currentImageURL = null;
+  }
 }
 
 function invalidatePoster() {
   posterReady = false;
   downloadButton.hidden = true;
-  status.textContent = "";
+  saveInstructions.hidden = true;
+  openImageButton.hidden = true;
+  statusText.textContent = "";
+  clearOldImageURL();
 }
 
-nameInput.addEventListener("input", function() {
+nameInput.addEventListener("input", () => {
   invalidatePoster();
   drawPoster();
 });
 
-photoInput.addEventListener("change", function(event) {
+photoInput.addEventListener("change", event => {
   const version = ++imageVersion;
-
   invalidatePoster();
   portrait = null;
 
   const file = event.target.files[0];
-
   if (!file) {
     drawPoster();
     return;
   }
 
   if (!file.type.startsWith("image/")) {
-    alert("Please select a valid image file.");
+    alert("Please select an image file.");
     photoInput.value = "";
     drawPoster();
     return;
   }
 
-  status.textContent = "Loading your photograph...";
+  statusText.textContent = "Loading your photograph...";
 
   const reader = new FileReader();
-
-  reader.onload = function(e) {
+  reader.onload = e => {
     const image = new Image();
 
-    image.onload = function() {
+    image.onload = () => {
       if (version !== imageVersion) return;
-
       portrait = image;
       drawPoster();
-
-      status.textContent =
-        "Photograph loaded. Tap Create My Poster.";
+      statusText.textContent = "Photograph loaded. Tap Create My Poster.";
     };
 
-    image.onerror = function() {
+    image.onerror = () => {
       if (version !== imageVersion) return;
-
-      status.textContent = "We couldn't read that photograph.";
-      alert("Please choose another photograph.");
+      statusText.textContent = "We couldn't read that photograph. Please choose another.";
     };
 
     image.src = e.target.result;
   };
 
-  reader.onerror = function() {
-    status.textContent = "Unable to read the selected file.";
-    alert("Please try selecting your photograph again.");
+  reader.onerror = () => {
+    statusText.textContent = "Unable to read the selected file. Please try again.";
   };
 
   reader.readAsDataURL(file);
 });
 
-document.getElementById("posterForm").addEventListener(
-  "submit",
-  async function(event) {
-    event.preventDefault();
+document.getElementById("posterForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-    if (!nameInput.value.trim()) {
-      alert("Please enter your name.");
-      return;
-    }
-
-    if (!portrait) {
-      alert("Please upload your photograph and wait for it to load.");
-      return;
-    }
-
-    createButton.disabled = true;
-    createButton.textContent = "CREATING POSTER...";
-    status.textContent = "Preparing your poster...";
-
-    try {
-      await loadFonts();
-      drawPoster();
-
-      posterReady = true;
-      downloadButton.hidden = false;
-
-      status.textContent =
-        "Your poster is ready! Tap Download My Poster.";
-
-      downloadButton.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-
-    } catch (error) {
-      console.error("Poster preview error:", error);
-
-      posterReady = true;
-      downloadButton.hidden = false;
-
-      status.textContent =
-        "Your poster preview is ready. You can download it now.";
-
-    } finally {
-      createButton.disabled = false;
-      createButton.textContent = "CREATE MY POSTER";
-    }
+  if (!nameInput.value.trim()) {
+    alert("Please enter your name.");
+    return;
   }
-);
+  if (!portrait) {
+    alert("Please upload your photograph and wait for it to load.");
+    return;
+  }
 
-function createPosterBlob() {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(function(blob) {
-      if (!blob) {
-        reject(new Error("The browser could not create the poster image."));
-        return;
-      }
+  createButton.disabled = true;
+  createButton.textContent = "CREATING POSTER...";
+  statusText.textContent = "Preparing your poster...";
 
-      resolve(blob);
-    }, "image/jpeg", 0.90);
-  });
-}
+  try {
+    await loadFonts();
+  } catch (error) {
+    console.warn("Using available fonts.", error);
+  }
+
+  drawPoster();
+  posterReady = true;
+  downloadButton.hidden = false;
+  statusText.textContent = "Your poster is ready. Tap Save / Download My Poster.";
+  createButton.disabled = false;
+  createButton.textContent = "CREATE MY POSTER";
+
+  downloadButton.scrollIntoView({ behavior: "smooth", block: "center" });
+});
 
 function makeFileName() {
   const cleanName = nameInput.value.trim()
@@ -594,110 +463,94 @@ function makeFileName() {
   return "Metime-Move-for-More-" + cleanName + ".jpg";
 }
 
-async function downloadPosterDirectly() {
+function canvasToBlob() {
+  return new Promise((resolve, reject) => {
+    try {
+      canvas.toBlob(blob => {
+        if (blob) resolve(blob);
+        else reject(new Error("Your browser could not create the image."));
+      }, "image/jpeg", 0.9);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+downloadButton.addEventListener("click", async () => {
   if (!posterReady || !portrait) {
     alert("Please create your poster first.");
     return;
   }
 
   downloadButton.disabled = true;
-  downloadButton.textContent = "PREPARING YOUR POSTER...";
-  status.textContent = "Preparing your poster for saving...";
-
-  let temporaryURL = null;
+  downloadButton.textContent = "PREPARING IMAGE...";
+  statusText.textContent = "Preparing your image. Please wait.";
 
   try {
     await loadFonts();
     drawPoster();
 
-    const blob = await createPosterBlob();
+    const blob = await canvasToBlob();
     const fileName = makeFileName();
+    const file = new File([blob], fileName, { type: "image/jpeg" });
 
-    const file = new File(
-      [blob],
-      fileName,
-      { type: "image/jpeg" }
-    );
-
-    // Try the iPhone share sheet first.
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ) {
+    // Preferred on iPhone: use the system share sheet for the image.
+    if (navigator.share && navigator.canShare &&
+        navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
           files: [file],
-          title: "Metime Annual Fitness Walk - Move for More"
+          title: "Metime Annual Fitness Walk — Move for More"
         });
 
-        status.textContent =
-          "Sharing opened. Choose Save Image or Save to Photos if available.";
-
+        statusText.textContent =
+          "Sharing menu opened. Choose Save Image or Save to Photos if available.";
         return;
-
       } catch (shareError) {
-        // If sharing was cancelled, do not force a download.
         if (shareError.name === "AbortError") {
-          status.textContent =
-            "Sharing was cancelled. Tap Download My Poster to try again.";
+          statusText.textContent = "Sharing cancelled. Tap the button to try again.";
           return;
         }
-
-        console.warn("Sharing unavailable; trying download.", shareError);
+        console.warn("Sharing unavailable; opening the image instead.", shareError);
       }
     }
 
-    // Browser download fallback.
-    temporaryURL = URL.createObjectURL(blob);
+    // Fallback: open the image directly so it can be saved manually.
+    clearOldImageURL();
+    currentImageURL = URL.createObjectURL(blob);
+    const opened = window.open(currentImageURL, "_blank");
 
-    const link = document.createElement("a");
-    link.href = temporaryURL;
-    link.download = fileName;
-    link.style.display = "none";
+    saveInstructions.hidden = false;
+    openImageButton.hidden = false;
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    status.textContent =
-      "Your download was requested. If it opens in Files, " +
-      openInstructions();
-
-  } catch (error) {
-    console.error("Poster download error:", error);
-
-    status.textContent =
-      "Download failed: " + (error.message || "Unknown error");
-
-    alert(
-      "We couldn't prepare the poster. Please try again. " +
-      "Details: " + (error.message || "Unknown error")
-    );
-
-  } finally {
-    if (temporaryURL) {
-      setTimeout(function() {
-        URL.revokeObjectURL(temporaryURL);
-      }, 60000);
+    if (opened) {
+      statusText.textContent =
+        "The image opened in a new tab. Press and hold it, then choose Save to Photos.";
+    } else {
+      statusText.textContent =
+        "Your image is ready. Tap OPEN POSTER IMAGE, then press and hold it to save.";
     }
 
+    // Retain the Blob URL while the user saves the image.
+    openImageButton.onclick = () => {
+      if (currentImageURL) window.open(currentImageURL, "_blank");
+    };
+
+  } catch (error) {
+    console.error("Poster creation/download error:", error);
+    statusText.textContent =
+      "Could not create the image: " + (error.message || "Unknown error");
+    alert("The image could not be created. Please try again. Details: " +
+      (error.message || "Unknown error"));
+  } finally {
     downloadButton.disabled = false;
-    downloadButton.textContent = "DOWNLOAD MY POSTER";
+    downloadButton.textContent = "SAVE / DOWNLOAD MY POSTER";
   }
-}
+});
 
-function openInstructions() {
-  return "open the image and use the Share menu to save it to Photos.";
-}
-
-downloadButton.addEventListener("click", downloadPosterDirectly);
-
-// Draw the initial preview.
 loadFonts()
-  .catch(error => console.warn("Fonts could not load:", error))
+  .catch(() => {})
   .finally(drawPoster);
 </script>
-
 </body>
 </html>
