@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#171717">
-<title>Metime Annual Fitness Walk — Move for More</title>
+<title>Metime Annual Fitness Walk | Move for More</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,12 +91,6 @@ canvas {
 }
 [hidden] { display: none !important; }
 
-#saveInstructions {
-  padding: 12px;
-  background: var(--pale-gold);
-  border-radius: 8px;
-  overflow-wrap: anywhere;
-}
 @media (max-width: 600px) {
   body { padding: 9px; }
   .card { padding: 14px; }
@@ -130,8 +123,9 @@ canvas {
       </p>
 
       <button id="createButton" type="submit">CREATE MY POSTER</button>
-      <button id="downloadButton" type="button" class="secondary" hidden>
-        SAVE / DOWNLOAD MY POSTER
+
+      <button id="saveButton" type="button" class="secondary" hidden>
+        OPEN POSTER TO SAVE
       </button>
     </form>
 
@@ -141,17 +135,6 @@ canvas {
 
     <canvas id="canvas" width="1080" height="1350"
             aria-label="Metime Annual Fitness Walk poster"></canvas>
-
-    <div id="saveInstructions" class="note" hidden>
-      <strong>Your poster is ready.</strong>
-      <p id="fallbackText">
-        If the sharing menu does not open, use the button below to open
-        the image, then press and hold the image to save it to Photos.
-      </p>
-      <button id="openImageButton" type="button" hidden>
-        OPEN POSTER IMAGE
-      </button>
-    </div>
   </section>
 
   <section class="card">
@@ -177,10 +160,8 @@ const ctx = canvas.getContext("2d");
 const nameInput = document.getElementById("name");
 const photoInput = document.getElementById("photo");
 const createButton = document.getElementById("createButton");
-const downloadButton = document.getElementById("downloadButton");
+const saveButton = document.getElementById("saveButton");
 const statusText = document.getElementById("status");
-const saveInstructions = document.getElementById("saveInstructions");
-const openImageButton = document.getElementById("openImageButton");
 
 const GOLD = "#D4AF37";
 const DARK_GOLD = "#A88620";
@@ -191,7 +172,8 @@ const WHITE = "#FFFFFF";
 let portrait = null;
 let posterReady = false;
 let imageVersion = 0;
-let currentImageURL = null;
+let posterBlob = null;
+let posterObjectURL = null;
 
 function roundedRect(x, y, w, h, r, color) {
   ctx.beginPath();
@@ -220,9 +202,9 @@ async function loadFonts() {
 }
 
 function drawPoster() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, 1080, 1350);
   ctx.fillStyle = WHITE;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, 1080, 1350);
 
   // Header
   ctx.fillStyle = BLACK;
@@ -232,6 +214,7 @@ function drawPoster() {
 
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
+
   ctx.fillStyle = GOLD;
   ctx.font = '700 30px "Poppins", Arial, sans-serif';
   ctx.fillText("METIME FITNESS CENTRE KADUNA", 540, 53);
@@ -248,7 +231,7 @@ function drawPoster() {
   ctx.font = '800 59px "Poppins", Arial, sans-serif';
   ctx.fillText("ATTENDING", 540, 265);
 
-  // Main event
+  // Event title
   ctx.fillStyle = DARK_GOLD;
   ctx.font = fitText("METIME ANNUAL FITNESS WALK", 1000, 46, "Bodoni Moda");
   ctx.fillText("METIME ANNUAL FITNESS WALK", 540, 340);
@@ -261,7 +244,7 @@ function drawPoster() {
   ctx.font = '600 18px "Poppins", Arial, sans-serif';
   ctx.fillText("A WOMEN-AND-GIRLS-ONLY EVENT", 540, 425);
 
-  // Photograph frame
+  // Photo frame
   roundedRect(65, 455, 420, 470, 22, GOLD);
   roundedRect(80, 470, 390, 440, 14, PALE_GOLD);
 
@@ -287,8 +270,6 @@ function drawPoster() {
     ctx.fillStyle = DARK_GOLD;
     ctx.font = '700 27px "Poppins", Arial, sans-serif';
     ctx.fillText("YOUR PHOTO", 275, 675);
-    ctx.font = '400 20px "Poppins", Arial, sans-serif';
-    ctx.fillText("Upload your picture", 275, 715);
   }
 
   // Participant name
@@ -334,6 +315,7 @@ function drawPoster() {
   // Footer
   roundedRect(55, 1030, 970, 200, 16, BLACK);
   ctx.textAlign = "center";
+
   ctx.fillStyle = GOLD;
   ctx.font = '700 32px "Bodoni Moda", Georgia, serif';
   ctx.fillText("WALK  •  CONNECT  •  STAY FIT", 540, 1090);
@@ -349,6 +331,7 @@ function drawPoster() {
   ctx.fillStyle = BLACK;
   ctx.font = '700 21px "Poppins", Arial, sans-serif';
   ctx.fillText("CONTACT: 09036556838", 540, 1270);
+
   ctx.font = '500 19px "Poppins", Arial, sans-serif';
   ctx.fillText("metimecenter@gmail.com", 540, 1305);
 
@@ -356,30 +339,26 @@ function drawPoster() {
   ctx.fillRect(0, 1335, 1080, 15);
 }
 
-function clearOldImageURL() {
-  if (currentImageURL) {
-    URL.revokeObjectURL(currentImageURL);
-    currentImageURL = null;
+function resetPosterExport() {
+  posterReady = false;
+  posterBlob = null;
+  saveButton.hidden = true;
+  statusText.textContent = "";
+
+  if (posterObjectURL) {
+    URL.revokeObjectURL(posterObjectURL);
+    posterObjectURL = null;
   }
 }
 
-function invalidatePoster() {
-  posterReady = false;
-  downloadButton.hidden = true;
-  saveInstructions.hidden = true;
-  openImageButton.hidden = true;
-  statusText.textContent = "";
-  clearOldImageURL();
-}
-
 nameInput.addEventListener("input", () => {
-  invalidatePoster();
+  resetPosterExport();
   drawPoster();
 });
 
 photoInput.addEventListener("change", event => {
   const version = ++imageVersion;
-  invalidatePoster();
+  resetPosterExport();
   portrait = null;
 
   const file = event.target.files[0];
@@ -389,7 +368,7 @@ photoInput.addEventListener("change", event => {
   }
 
   if (!file.type.startsWith("image/")) {
-    alert("Please select an image file.");
+    alert("Please select a valid image.");
     photoInput.value = "";
     drawPoster();
     return;
@@ -398,6 +377,7 @@ photoInput.addEventListener("change", event => {
   statusText.textContent = "Loading your photograph...";
 
   const reader = new FileReader();
+
   reader.onload = e => {
     const image = new Image();
 
@@ -410,14 +390,14 @@ photoInput.addEventListener("change", event => {
 
     image.onerror = () => {
       if (version !== imageVersion) return;
-      statusText.textContent = "We couldn't read that photograph. Please choose another.";
+      statusText.textContent = "Unable to read the photograph. Please choose another.";
     };
 
     image.src = e.target.result;
   };
 
   reader.onerror = () => {
-    statusText.textContent = "Unable to read the selected file. Please try again.";
+    statusText.textContent = "Unable to read the selected file.";
   };
 
   reader.readAsDataURL(file);
@@ -430,6 +410,7 @@ document.getElementById("posterForm").addEventListener("submit", async event => 
     alert("Please enter your name.");
     return;
   }
+
   if (!portrait) {
     alert("Please upload your photograph and wait for it to load.");
     return;
@@ -447,12 +428,13 @@ document.getElementById("posterForm").addEventListener("submit", async event => 
 
   drawPoster();
   posterReady = true;
-  downloadButton.hidden = false;
-  statusText.textContent = "Your poster is ready. Tap Save / Download My Poster.";
+  saveButton.hidden = false;
+  statusText.textContent = "Your poster is ready. Tap OPEN POSTER TO SAVE.";
+
   createButton.disabled = false;
   createButton.textContent = "CREATE MY POSTER";
 
-  downloadButton.scrollIntoView({ behavior: "smooth", block: "center" });
+  saveButton.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
 function makeFileName() {
@@ -463,88 +445,93 @@ function makeFileName() {
   return "Metime-Move-for-More-" + cleanName + ".jpg";
 }
 
-function canvasToBlob() {
-  return new Promise((resolve, reject) => {
-    try {
-      canvas.toBlob(blob => {
-        if (blob) resolve(blob);
-        else reject(new Error("Your browser could not create the image."));
-      }, "image/jpeg", 0.9);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-downloadButton.addEventListener("click", async () => {
+saveButton.addEventListener("click", async () => {
   if (!posterReady || !portrait) {
     alert("Please create your poster first.");
     return;
   }
 
-  downloadButton.disabled = true;
-  downloadButton.textContent = "PREPARING IMAGE...";
-  statusText.textContent = "Preparing your image. Please wait.";
+  saveButton.disabled = true;
+  saveButton.textContent = "PREPARING IMAGE...";
+
+  // Open a blank tab immediately from the user's tap.
+  // This avoids mobile popup blockers after asynchronous work.
+  const imageTab = window.open("about:blank", "_blank");
 
   try {
     await loadFonts();
     drawPoster();
 
-    const blob = await canvasToBlob();
-    const fileName = makeFileName();
-    const file = new File([blob], fileName, { type: "image/jpeg" });
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(result => {
+        if (result) resolve(result);
+        else reject(new Error("The browser could not export the poster."));
+      }, "image/jpeg", 0.9);
+    });
 
-    // Preferred on iPhone: use the system share sheet for the image.
-    if (navigator.share && navigator.canShare &&
-        navigator.canShare({ files: [file] })) {
-      try {
+    if (!imageTab) {
+      // If pop-ups are blocked, offer the iPhone share sheet.
+      const file = new File([blob], makeFileName(), { type: "image/jpeg" });
+
+      if (navigator.share && navigator.canShare &&
+          navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
           title: "Metime Annual Fitness Walk — Move for More"
         });
-
-        statusText.textContent =
-          "Sharing menu opened. Choose Save Image or Save to Photos if available.";
+        statusText.textContent = "Choose Save Image or Save to Photos in the sharing menu.";
         return;
-      } catch (shareError) {
-        if (shareError.name === "AbortError") {
-          statusText.textContent = "Sharing cancelled. Tap the button to try again.";
-          return;
-        }
-        console.warn("Sharing unavailable; opening the image instead.", shareError);
       }
+
+      throw new Error("Your browser blocked the image tab. Allow pop-ups and try again.");
     }
 
-    // Fallback: open the image directly so it can be saved manually.
-    clearOldImageURL();
-    currentImageURL = URL.createObjectURL(blob);
-    const opened = window.open(currentImageURL, "_blank");
+    // Display a standalone image, without a download page.
+    posterObjectURL = URL.createObjectURL(blob);
 
-    saveInstructions.hidden = false;
-    openImageButton.hidden = false;
+    imageTab.document.open();
+    imageTab.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${makeFileName()}</title>
+<style>
+html,body{margin:0;min-height:100%;background:#171717}
+body{display:flex;align-items:center;justify-content:center}
+img{display:block;width:100%;height:auto;max-width:1080px}
+p{position:fixed;bottom:0;left:0;right:0;margin:0;padding:12px;
+background:#171717;color:#D4AF37;text-align:center;
+font:14px Arial,sans-serif}
+</style>
+</head>
+<body>
+<img id="posterImage" alt="Your Metime Move for More poster">
+<p>Press and hold the poster, then choose Save to Photos.</p>
+</body>
+</html>`);
+    imageTab.document.close();
 
-    if (opened) {
-      statusText.textContent =
-        "The image opened in a new tab. Press and hold it, then choose Save to Photos.";
-    } else {
-      statusText.textContent =
-        "Your image is ready. Tap OPEN POSTER IMAGE, then press and hold it to save.";
-    }
+    imageTab.document.getElementById("posterImage").src = posterObjectURL;
 
-    // Retain the Blob URL while the user saves the image.
-    openImageButton.onclick = () => {
-      if (currentImageURL) window.open(currentImageURL, "_blank");
-    };
+    statusText.textContent =
+      "Your poster opened in a new tab. Press and hold the image, then choose Save to Photos.";
 
   } catch (error) {
-    console.error("Poster creation/download error:", error);
+    console.error("Poster export failed:", error);
+
+    if (imageTab && !imageTab.closed) {
+      imageTab.close();
+    }
+
     statusText.textContent =
-      "Could not create the image: " + (error.message || "Unknown error");
-    alert("The image could not be created. Please try again. Details: " +
-      (error.message || "Unknown error"));
+      "Could not open the poster: " + (error.message || "Unknown error");
+
+    alert("Could not open the poster image. " +
+      (error.message || "Please try again."));
   } finally {
-    downloadButton.disabled = false;
-    downloadButton.textContent = "SAVE / DOWNLOAD MY POSTER";
+    saveButton.disabled = false;
+    saveButton.textContent = "OPEN POSTER TO SAVE";
   }
 });
 
