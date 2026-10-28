@@ -8,15 +8,15 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --black: #111111;
-  --gold: #D4AF37;
-  --light-gold: #F3E3A3;
+  --black: #101010;
+  --gold: #C9A44C;
+  --light-gold: #E8D6A0;
   --white: #FFFFFF;
-  --cream: #F8F5EC;
+  --cream: #F8F6F0;
 }
 
 * {
@@ -40,30 +40,30 @@ h1 {
   text-align: center;
   color: var(--black);
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(36px, 7vw, 52px);
+  font-size: clamp(38px, 7vw, 54px);
   font-weight: 700;
   letter-spacing: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .intro {
   text-align: center;
   line-height: 1.8;
-  color: #333333;
   font-size: 14px;
+  color: #444;
 }
 
 .intro strong {
-  color: #997719;
+  color: #967326;
 }
 
 .card {
-  background: var(--white);
-  border: 1px solid #D4AF37;
-  border-radius: 18px;
+  background: white;
+  border: 1px solid #D9C58D;
+  border-radius: 16px;
   padding: 22px;
   margin: 20px 0;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.045);
 }
 
 label {
@@ -78,15 +78,12 @@ input {
   padding: 13px;
   font-size: 16px;
   font-family: 'Montserrat', Arial, sans-serif;
-  border: 1px solid #D8C78D;
-  border-radius: 9px;
-  background: #FFFFFF;
-  color: #111111;
+  border: 1px solid #D8CBA5;
+  border-radius: 8px;
 }
 
 input:focus {
   outline: 2px solid var(--gold);
-  border-color: var(--gold);
 }
 
 button {
@@ -95,18 +92,14 @@ button {
   padding: 15px;
   margin-top: 15px;
   border: 0;
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--black);
-  color: var(--gold);
+  color: var(--light-gold);
   font-family: 'Montserrat', Arial, sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 1px;
   cursor: pointer;
-}
-
-button:active {
-  opacity: 0.85;
 }
 
 button:disabled {
@@ -129,7 +122,7 @@ canvas {
   width: 100%;
   height: auto;
   margin-top: 20px;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 [hidden] {
@@ -137,9 +130,8 @@ canvas {
 }
 
 .event-heading {
-  color: var(--black);
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 24px;
+  font-size: 25px;
 }
 
 @media (max-width: 600px) {
@@ -217,7 +209,6 @@ canvas {
   </section>
 
   <section class="card">
-
     <strong class="event-heading">EVENT DETAILS</strong>
 
     <p class="note">
@@ -232,7 +223,6 @@ canvas {
       Contact: 09036556838<br>
       Email: metimecenter@gmail.com
     </p>
-
   </section>
 
 </main>
@@ -254,7 +244,6 @@ let posterReady = false;
 function roundedRect(x, y, w, h, r, color) {
   ctx.beginPath();
 
-  // Use a compatible path if roundRect is unavailable.
   if (typeof ctx.roundRect === "function") {
     ctx.roundRect(x, y, w, h, r);
   } else {
@@ -281,69 +270,71 @@ function drawPoster() {
 
   ctx.clearRect(0, 0, W, H);
 
-  // Background
-  ctx.fillStyle = "#111111";
+  // Rich black background.
+  ctx.fillStyle = "#101010";
   ctx.fillRect(0, 0, W, H);
 
-  // Double gold border
-  ctx.strokeStyle = "#D4AF37";
+  // Refined double gold border.
+  ctx.strokeStyle = "#C9A44C";
   ctx.lineWidth = 5;
   ctx.strokeRect(22, 22, W - 44, H - 44);
 
-  ctx.strokeStyle = "#F3E3A3";
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = "#E8D6A0";
+  ctx.lineWidth = 1;
   ctx.strokeRect(36, 36, W - 72, H - 72);
 
-  // Gold header
-  ctx.fillStyle = "#D4AF37";
-  ctx.fillRect(40, 40, W - 80, 150);
-
+  // Clean white and gold brand header.
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.fillStyle = "#111111";
-  ctx.font = "800 32px Montserrat, Arial, sans-serif";
+  ctx.fillStyle = "#C9A44C";
+  ctx.fillRect(40, 40, W - 80, 130);
+
+  ctx.fillStyle = "#101010";
+  ctx.font = "700 30px Montserrat, Arial, sans-serif";
   ctx.fillText("METIME FITNESS CENTRE KADUNA", 540, 78);
 
-  ctx.font = "600 21px Montserrat, Arial, sans-serif";
-  ctx.fillText("FITNESS • WELLNESS • SISTERHOOD", 540, 120);
+  ctx.font = "600 18px Montserrat, Arial, sans-serif";
+  ctx.fillText("FITNESS  •  WELLNESS  •  SISTERHOOD", 540, 115);
 
-  ctx.font = "600 17px Montserrat, Arial, sans-serif";
-  ctx.fillText("PROUDLY PRESENTS", 540, 160);
+  ctx.font = "500 15px Montserrat, Arial, sans-serif";
+  ctx.fillText("PROUDLY PRESENTS", 540, 146);
 
-  // Attendance statement
+  // Elegant attendance heading.
   ctx.fillStyle = "#FFFFFF";
   ctx.font = "italic 64px 'Cormorant Garamond', Georgia, serif";
-  ctx.fillText("I will be", 540, 238);
+  ctx.fillText("I will be", 540, 220);
 
-  roundedRect(280, 268, 520, 82, 18, "#D4AF37");
+  // Gold attendance banner.
+  roundedRect(300, 250, 480, 76, 8, "#C9A44C");
 
-  ctx.fillStyle = "#111111";
-  ctx.font = "800 61px Montserrat, Arial, sans-serif";
-  ctx.fillText("ATTENDING", 540, 310);
+  ctx.fillStyle = "#101010";
+  ctx.font = "800 54px Montserrat, Arial, sans-serif";
+  ctx.fillText("ATTENDING", 540, 289);
 
-  // Event title
-  ctx.fillStyle = "#D4AF37";
-  ctx.font = "700 39px 'Cormorant Garamond', Georgia, serif";
-  ctx.fillText("METIME ANNUAL FITNESS WALK", 540, 393);
+  // Event title.
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "600 43px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillText("METIME ANNUAL FITNESS WALK", 540, 365);
+
+  ctx.fillStyle = "#C9A44C";
+  ctx.font = "800 27px Montserrat, Arial, sans-serif";
+  ctx.fillText("MOVE FOR MORE", 540, 409);
 
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "800 29px Montserrat, Arial, sans-serif";
-  ctx.fillText("MOVE FOR MORE", 540, 435);
+  ctx.font = "600 17px Montserrat, Arial, sans-serif";
+  ctx.fillText("A WOMEN-AND-GIRLS-ONLY EVENT", 540, 443);
 
-  ctx.font = "600 19px Montserrat, Arial, sans-serif";
-  ctx.fillText("A WOMEN-AND-GIRLS-ONLY EVENT", 540, 469);
-
-  // Photograph frame
-  roundedRect(65, 490, 420, 435, 28, "#D4AF37");
-  roundedRect(80, 505, 390, 405, 19, "#FFFFFF");
+  // Photograph frame.
+  roundedRect(65, 475, 420, 445, 12, "#C9A44C");
+  roundedRect(78, 488, 394, 419, 8, "#FFFFFF");
 
   if (portrait) {
     const box = {
-      x: 90,
-      y: 515,
-      w: 370,
-      h: 385
+      x: 88,
+      y: 498,
+      w: 374,
+      h: 399
     };
 
     const scale = Math.max(
@@ -358,7 +349,7 @@ function drawPoster() {
     ctx.beginPath();
 
     if (typeof ctx.roundRect === "function") {
-      ctx.roundRect(box.x, box.y, box.w, box.h, 14);
+      ctx.roundRect(box.x, box.y, box.w, box.h, 5);
     } else {
       ctx.rect(box.x, box.y, box.w, box.h);
     }
@@ -374,32 +365,35 @@ function drawPoster() {
     );
 
     ctx.restore();
-
   } else {
     ctx.fillStyle = "#252525";
-    ctx.fillRect(90, 515, 370, 385);
+    ctx.fillRect(88, 498, 374, 399);
 
-    ctx.fillStyle = "#D4AF37";
-    ctx.font = "800 29px Montserrat, Arial, sans-serif";
-    ctx.fillText("YOUR PHOTO", 275, 690);
+    ctx.fillStyle = "#C9A44C";
+    ctx.font = "700 28px Montserrat, Arial, sans-serif";
+    ctx.fillText("YOUR PHOTO", 275, 680);
 
-    ctx.font = "500 19px Montserrat, Arial, sans-serif";
-    ctx.fillText("Upload your picture", 275, 730);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "400 18px Montserrat, Arial, sans-serif";
+    ctx.fillText("Upload your picture", 275, 720);
   }
 
-  // Participant name
+  // NAME PLACEMENT:
+  // A separate black-and-gold nameplate directly below the photograph.
+  // This gives the name a clear visual connection to the portrait.
+  roundedRect(65, 935, 420, 83, 8, "#C9A44C");
+  roundedRect(72, 942, 406, 69, 5, "#FFFFFF");
+
   const participantName =
     (nameInput.value.trim() || "YOUR NAME").toUpperCase();
 
-  roundedRect(65, 940, 420, 65, 14, "#FFFFFF");
-
-  ctx.fillStyle = "#111111";
-  ctx.font = "800 30px Montserrat, Arial, sans-serif";
+  ctx.fillStyle = "#101010";
+  ctx.font = "700 30px Montserrat, Arial, sans-serif";
 
   let displayName = participantName;
 
   while (
-    ctx.measureText(displayName).width > 385 &&
+    ctx.measureText(displayName).width > 370 &&
     displayName.length > 3
   ) {
     displayName = displayName.slice(0, -2);
@@ -409,69 +403,70 @@ function drawPoster() {
     displayName = displayName.trim() + "…";
   }
 
-  ctx.fillText(displayName, 275, 973);
+  ctx.fillText(displayName, 275, 977);
 
-  // Right-hand information panel
+  // Right column: short, clearly separated information.
   ctx.textAlign = "left";
 
-  ctx.fillStyle = "#D4AF37";
-  ctx.font = "800 29px Montserrat, Arial, sans-serif";
-  ctx.fillText("MOVE FOR MORE", 530, 530);
+  ctx.fillStyle = "#C9A44C";
+  ctx.font = "800 24px Montserrat, Arial, sans-serif";
+  ctx.fillText("YOUR WALK. YOUR POWER.", 530, 505);
 
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "700 25px Montserrat, Arial, sans-serif";
-  ctx.fillText("EMPOWERING WOMEN", 530, 575);
-  ctx.fillText("THROUGH FITNESS", 530, 612);
+  ctx.font = "600 25px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillText("Celebrating women", 530, 552);
+  ctx.fillText("through movement.", 530, 586);
 
-  // Date
-  roundedRect(515, 650, 500, 100, 16, "#D4AF37");
+  // Gold date panel.
+  roundedRect(515, 620, 500, 105, 8, "#C9A44C");
 
-  ctx.fillStyle = "#111111";
-  ctx.font = "700 23px Montserrat, Arial, sans-serif";
-  ctx.fillText("SATURDAY, 14 NOVEMBER", 538, 685);
+  ctx.fillStyle = "#101010";
+  ctx.font = "700 21px Montserrat, Arial, sans-serif";
+  ctx.fillText("SATURDAY, 14 NOVEMBER", 540, 656);
 
-  ctx.font = "800 34px Montserrat, Arial, sans-serif";
-  ctx.fillText("2026", 538, 724);
+  ctx.font = "800 35px Montserrat, Arial, sans-serif";
+  ctx.fillText("2026", 540, 699);
 
-  // Walk details
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "700 24px Montserrat, Arial, sans-serif";
-  ctx.fillText("ARRIVAL: 7:00 AM", 530, 795);
-  ctx.fillText("DISTANCE: 6 KM", 530, 837);
-
-  ctx.fillStyle = "#D4AF37";
-  ctx.font = "800 21px Montserrat, Arial, sans-serif";
-  ctx.fillText("STARTING POINT:", 530, 879);
+  // Event details.
+  ctx.fillStyle = "#C9A44C";
+  ctx.font = "700 18px Montserrat, Arial, sans-serif";
+  ctx.fillText("ARRIVAL", 530, 772);
+  ctx.fillText("DISTANCE", 530, 829);
+  ctx.fillText("MEETING POINT", 530, 886);
 
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "500 18px Montserrat, Arial, sans-serif";
-  ctx.fillText("Metime Centre, Kaduna", 530, 911);
-  ctx.fillText("No. 1B Toro Close, off Sultan Road,", 530, 939);
-  ctx.fillText("near Garkuwa Hospital, Kaduna North.", 530, 966);
+  ctx.font = "600 24px Montserrat, Arial, sans-serif";
+  ctx.fillText("7:00 AM", 690, 772);
+  ctx.fillText("6 KM", 690, 829);
 
-  // Footer
-  roundedRect(55, 1030, 970, 200, 22, "#FFFFFF");
+  ctx.font = "500 17px Montserrat, Arial, sans-serif";
+  ctx.fillText("Metime Centre, Kaduna", 530, 920);
+
+  ctx.font = "400 15px Montserrat, Arial, sans-serif";
+  ctx.fillText("No. 1B Toro Close, off Sultan Road,", 530, 949);
+  ctx.fillText("near Garkuwa Hospital, Kaduna North.", 530, 974);
+
+  // Footer panel.
+  roundedRect(55, 1040, 970, 185, 10, "#FFFFFF");
 
   ctx.textAlign = "center";
 
-  ctx.fillStyle = "#997719";
-  ctx.font = "800 34px Montserrat, Arial, sans-serif";
-  ctx.fillText("WALK • CONNECT • STAY FIT", 540, 1080);
+  ctx.fillStyle = "#997326";
+  ctx.font = "800 29px Montserrat, Arial, sans-serif";
+  ctx.fillText("WALK  •  CONNECT  •  STAY FIT", 540, 1083);
 
-  ctx.fillStyle = "#111111";
+  ctx.fillStyle = "#101010";
   ctx.font = "italic 29px 'Cormorant Garamond', Georgia, serif";
   ctx.fillText("For a healthier, happier you.", 540, 1125);
 
-  ctx.fillStyle = "#997719";
-  ctx.font = "800 23px Montserrat, Arial, sans-serif";
-  ctx.fillText("WALK WITH US. MOVE FOR MORE.", 540, 1170);
-
-  ctx.fillStyle = "#111111";
+  ctx.fillStyle = "#997326";
   ctx.font = "700 21px Montserrat, Arial, sans-serif";
-  ctx.fillText("CONTACT: 09036556838", 540, 1260);
+  ctx.fillText("WALK WITH US. MOVE FOR MORE.", 540, 1167);
 
-  ctx.font = "500 20px Montserrat, Arial, sans-serif";
-  ctx.fillText("metimecenter@gmail.com", 540, 1295);
+  // Contact information.
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "600 20px Montserrat, Arial, sans-serif";
+  ctx.fillText("09036556838  •  metimecenter@gmail.com", 540, 1270);
 }
 
 function invalidatePoster() {
@@ -545,7 +540,6 @@ form.addEventListener("submit", async function(event) {
   submitButton.textContent = "CREATING POSTER...";
 
   try {
-    // Wait briefly for the decorative fonts, but don't depend on the network.
     if (document.fonts && document.fonts.ready) {
       await Promise.race([
         document.fonts.ready,
@@ -600,7 +594,6 @@ proceed.addEventListener("click", function() {
   }
 });
 
-// Draw the empty template immediately.
 drawPoster();
 </script>
 
